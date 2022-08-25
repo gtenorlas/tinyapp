@@ -74,6 +74,15 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+  if (!longURL) {
+    return res.status(404).send(`404. ${id} Not Found`);;
+  }
+  res.redirect(longURL);
+});
+
 
 
 app.listen(PORT, () => {
