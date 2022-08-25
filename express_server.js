@@ -80,6 +80,14 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  const { longURL } = req.body;
+  urlDatabase[id] = longURL;
+  res.redirect("/urls");
+});
+
+
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
