@@ -44,7 +44,6 @@ app.post("/urls", (req, res) => {
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
-
 /*
   NOTE: 
   ! The GET /urls/new route needs to be defined before the GET /urls/:id route. Routes defined earlier will take precedence,
