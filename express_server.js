@@ -10,7 +10,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const generateRandomString = function () {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let string = "";
+  let charactersLength = characters.length;
 
+  for (let i = 0; i < 5; i++) {
+    string += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return string;
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -41,6 +51,9 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
+  const tinyURL = generateRandomString();
+
+  urlDatabase[tinyURL] = req.body.longURL;
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
