@@ -10,6 +10,11 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
+      <div>
+        <% if (username) { %>
+          <%= username %>
+            <% } %>
+      </div>
       <div class="login-container">
         <form class="form-inline justify-content-right" action="/login" method="POST">
           <div class="form-group mb-2">
