@@ -78,6 +78,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  
   res.render("register", { username: null });
 });
 
