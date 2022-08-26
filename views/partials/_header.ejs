@@ -10,20 +10,28 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-      <div>
-        <% if (username) { %>
-          <%= username %>
-            <% } %>
-      </div>
-      <div class="login-container">
-        <form class="form-inline justify-content-right" action="/login" method="POST">
-          <div class="form-group mb-2">
-            <input class="form-control" type="text" name="username" placeholder="Enter username"
-              style="width: 300px; margin: 1em" />
-            <button type="submit" class="btn btn-primary">Login</button>
+      <% if (username) { %>
+        <div class="login-container justify-content-right">
+          <form class="form-inline" action="/logout" method="POST">
+            <div class="form-group mb-2">
+              <a class="nav-item nav-link btn disabled" href="#">
+                <%= username %>
+              </a>
+              <button type="submit" class="btn btn-primary">Logout</button>
+            </div>
+          </form>
+        </div>
+        <% }else { %>
+          <div class="login-container justify-content-right">
+            <form class="form-inline" action="/login" method="POST">
+              <div class="form-group mb-2">
+                <input class="form-control" type="text" name="username" placeholder="Enter username"
+                  style="width: 300px; margin: 1em" />
+                <button type="submit" class="btn btn-primary">Login</button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+          <% } %>
     </div>
   </nav>
 </header>
