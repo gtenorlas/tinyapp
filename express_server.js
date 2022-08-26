@@ -77,6 +77,10 @@ app.post("/urls", (req, res) => {
   res.redirect(`urls/${tinyURL}`);
 });
 
+app.get("/register", (req, res) => {
+  res.render("register", { username: null });
+});
+
 /*
   NOTE: 
   ! The GET /urls/new route needs to be defined before the GET /urls/:id route. Routes defined earlier will take precedence,
