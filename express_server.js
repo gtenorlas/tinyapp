@@ -14,6 +14,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  w5wmb: { id: 'w5wmb', email: 'gene.tenorlas@yahoo.com', password: 'abc' }
+};
+
+
 const generateRandomString = function () {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let string = "";
@@ -65,6 +70,7 @@ app.get("/urls", (req, res) => {
     username: req.cookies["username"],
     urls: urlDatabase
   };
+  console.log("users", users);
   res.render("urls_index", templateVars);
 
 });
@@ -78,9 +84,19 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  
+
   res.render("register", { username: null });
 });
+
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  const id = generateRandomString();
+  const newUser = { id, email, password };
+  users[id] = newUser;
+  res.cookie('username', email);
+  res.cookie('user_id', id);
+  res.redirect("/urls");
+})
 
 /*
   NOTE: 
