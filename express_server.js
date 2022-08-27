@@ -66,11 +66,14 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const userID = req.cookies["user_id"];
+  const user = users[userID];
+
   const templateVars = {
-    username: req.cookies["username"],
+    user,
     urls: urlDatabase
   };
-  console.log("users", users);
+  console.log("user", user);
   res.render("urls_index", templateVars);
 
 });
@@ -93,7 +96,6 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const newUser = { id, email, password };
   users[id] = newUser;
-  res.cookie('username', email);
   res.cookie('user_id', id);
   res.redirect("/urls");
 })
