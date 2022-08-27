@@ -67,8 +67,8 @@ app.post("/logout", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const userID = req.cookies["user_id"];
-  const user = users[userID];
-
+  const user = users[userID] === undefined ? null : users[userID];
+  console.log("user", user);
   const templateVars = {
     user,
     urls: urlDatabase
@@ -87,8 +87,11 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-
-  res.render("register", { username: null });
+  const templateVars = {
+    user: null
+  };
+  console.log("user", templateVars.user);
+  res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
