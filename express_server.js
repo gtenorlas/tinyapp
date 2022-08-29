@@ -214,14 +214,12 @@ app.post("/urls/:id/delete", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const { user } = generateTemplateVarUser(req);
 
-  console.log("user", user);
   if (!user) {
     return res.status(403).send("You need to be logged in to access this page");
   }
 
   //url id
   const id = req.params.id;
-  console.log("url id", id);
 
   //check if url does not exist in the database
   if (!urlDatabase[id]) {
