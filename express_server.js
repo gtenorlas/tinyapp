@@ -31,14 +31,14 @@ const generateRandomString = function () {
   return string;
 }
 
-const findUser = (email) => {
+const getUserByEmail = (email) => {
   for (const id in users) {
     if (users[id].email === email) {
       return users[id];
     }
   }
   return null;
-  
+
 }
 
 app.get("/", (req, res) => {
@@ -111,7 +111,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Invalid email or password");
   }
 
-  if (findUser(email)) {
+  if (getUserByEmail(email)) {
     return res.status(400).send("Email already taken");
   }
 
