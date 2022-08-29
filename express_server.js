@@ -9,13 +9,25 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
 app.use(cookieParser());
 
-const urlDatabase = {
+/* const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+}; */
+
+const urlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
+
 const users = {
-  w5wmb: { id: 'w5wmb', email: 'gene.t@yahoo.com', password: 'abc' }
+  w5wmb: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: 'abc' }
 };
 
 
@@ -130,6 +142,11 @@ app.post("/register", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const { user } = generateTemplateVarUser(req);
+
+  if (!user) {
+    return res.status(403).send("You need an account to access this page");
+  }
+  
   const templateVars = {
     user,
     urls: urlDatabase
