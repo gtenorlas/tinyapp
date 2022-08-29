@@ -38,7 +38,15 @@ const getUserByEmail = (email) => {
     }
   }
   return null;
+}
 
+const generateTemplateVarUser = (req) => {
+  const userID = req.cookies["user_id"];
+  const user = users[userID] === undefined ? null : users[userID];
+  const templateVars = {
+    user
+  };
+  return templateVars;
 }
 
 app.get("/", (req, res) => {
@@ -71,7 +79,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = getUserByEmail(email);
 
-  if(!user || user.password !== password) {
+  if (!user || user.password !== password) {
     return res.status(403).send("Invalid email or password");
   }
 
@@ -136,7 +144,8 @@ app.post("/register", (req, res) => {
   from most specific to least specific.
 */
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateObj = generateTemplateVarUser(req);
+  res.render("urls_new", templateObj);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -147,7 +156,8 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
-  const templateVars = { id, longURL: urlDatabase[id] };
+  const {user} = generateTemplateVarUser(req);
+  const templateVars = { id, longURL: urlDatabase[id], user };
   res.render("urls_show", templateVars);
 });
 
