@@ -6,7 +6,6 @@ const PORT = 8080; // default port 8080
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
-// req.cookies
 app.use(cookieParser());
 
 const urlDatabase = {
@@ -72,12 +71,21 @@ app.get("/fetch", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+  const { user } = generateTemplateVarUser(req);
+  //user already logged in -> redirect to /urls page
+  if (user) {
+    return res.redirect("/urls");
+  }
   res.render("login", { user: null });
 });
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = getUserByEmail(email);
+
+  if (!email || !password) {
+    return res.status(400).send("Email or password cannot be empty");
+  }
 
   if (!user || user.password !== password) {
     return res.status(403).send("Invalid email or password");
@@ -93,8 +101,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
-  const user = users[userID] === undefined ? null : users[userID];
+  const { user } = generateTemplateVarUser(req);
   const templateVars = {
     user,
     urls: urlDatabase
@@ -112,10 +119,12 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    user: null
-  };
-  res.render("register", templateVars);
+  const { user } = generateTemplateVarUser(req);
+  //user already logged in -> redirect to /urls page
+  if (user) {
+    return res.redirect("/urls");
+  }
+  res.render("register", { user: null });
 });
 
 app.post("/register", (req, res) => {
@@ -156,7 +165,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
-  const {user} = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req);
   const templateVars = { id, longURL: urlDatabase[id], user };
   res.render("urls_show", templateVars);
 });
