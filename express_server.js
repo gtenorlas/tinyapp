@@ -213,13 +213,12 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const { user } = generateTemplateVarUser(req);
+  //url id
+  const id = req.params.id;
 
   if (!user) {
     return res.status(403).send("You need to be logged in to access this page");
   }
-
-  //url id
-  const id = req.params.id;
 
   //check if url does not exist in the database
   if (!urlDatabase[id]) {
@@ -231,21 +230,38 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).send("Not allowed to view this page");
   }
 
-  const templateVars = { id, longURL: urlDatabase[id].longURL, user };
+  const templateVars = { id, user, longURL: urlDatabase[id].longURL };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:id", (req, res) => {
+  const { user } = generateTemplateVarUser(req);
+  //url id
   const id = req.params.id;
+
+  if (!user) {
+    return res.status(403).send("You need to be logged in to access this page");
+  }
+
+  //check if url does not exist in the database
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Page not found");
+  }
+
+  //check if url id belongs to the user id that is logged in 
+  if (urlDatabase[id].userID !== user.id) {
+    return res.status(403).send("Not allowed to view this page");
+  }
+
   const { longURL } = req.body;
-  urlDatabase[id] = longURL;
+  urlDatabase[id].longURL = longURL;
   res.redirect("/urls");
 });
 
 
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
-  const longURL = urlDatabase[id];
+  const longURL = urlDatabase[id].longURL;
   if (!longURL) {
     return res.status(404).send(`404. ${id} Not Found`);;
   }
