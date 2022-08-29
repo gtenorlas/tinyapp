@@ -27,8 +27,18 @@ const urlDatabase = {
 
 
 const users = {
-  w5wmb: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: 'abc' }
+  aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: 'abc' }
 };
+
+const urlsForUser = (userID) => {
+  const urls = {};
+  for (const id in urlDatabase) {
+    if (urlDatabase[id].userID === userID) {
+      urls[id] = urlDatabase[id].longURL;
+    }
+  }
+  return urls;
+}
 
 
 const generateRandomString = function () {
@@ -141,15 +151,19 @@ app.post("/register", (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
+  console.log("cookie user id",req.cookies["user_id"])
   const { user } = generateTemplateVarUser(req);
+  console.log("user", user);
 
   if (!user) {
     return res.status(403).send("You need an account to access this page");
   }
-  
+
+  const urls = urlsForUser(user.id);
+
   const templateVars = {
     user,
-    urls: urlDatabase
+    urls
   };
   res.render("urls_index", templateVars);
 
