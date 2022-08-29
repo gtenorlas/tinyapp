@@ -38,6 +38,7 @@ const findUser = (email) => {
     }
   }
   return null;
+  
 }
 
 app.get("/", (req, res) => {
