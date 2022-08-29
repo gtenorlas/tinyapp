@@ -154,6 +154,11 @@ app.post("/register", (req, res) => {
 */
 app.get("/urls/new", (req, res) => {
   const templateObj = generateTemplateVarUser(req);
+  const {user} = templateObj;
+  //user not logged in
+  if (!user) {
+    return res.redirect("/login");
+  }
   res.render("urls_new", templateObj);
 });
 
