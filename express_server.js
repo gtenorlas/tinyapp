@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const { response } = require("express");
 
 const PORT = 8080; // default port 8080
 
@@ -100,24 +101,6 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-app.get("/urls", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
-  const templateVars = {
-    user,
-    urls: urlDatabase
-  };
-  res.render("urls_index", templateVars);
-
-});
-
-app.post("/urls", (req, res) => {
-  const tinyURL = generateRandomString();
-  const longURL = req.body.longURL;
-
-  urlDatabase[tinyURL] = longURL;
-  res.redirect(`urls/${tinyURL}`);
-});
-
 app.get("/register", (req, res) => {
   const { user } = generateTemplateVarUser(req);
   //user already logged in -> redirect to /urls page
@@ -145,6 +128,30 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 })
 
+app.get("/urls", (req, res) => {
+  const { user } = generateTemplateVarUser(req);
+  const templateVars = {
+    user,
+    urls: urlDatabase
+  };
+  res.render("urls_index", templateVars);
+
+});
+
+app.post("/urls", (req, res) => {
+  const { user } = generateTemplateVarUser(req);
+
+  if (!user) {
+    return res.status(403).send("You need an account to access this page");
+  }
+
+  const tinyURL = generateRandomString();
+  const longURL = req.body.longURL;
+
+  urlDatabase[tinyURL] = longURL;
+  res.redirect(`urls/${tinyURL}`);
+});
+
 /*
   NOTE: 
   ! The GET /urls/new route needs to be defined before the GET /urls/:id route. Routes defined earlier will take precedence,
@@ -154,7 +161,7 @@ app.post("/register", (req, res) => {
 */
 app.get("/urls/new", (req, res) => {
   const templateObj = generateTemplateVarUser(req);
-  const {user} = templateObj;
+  const { user } = templateObj;
   //user not logged in
   if (!user) {
     return res.redirect("/login");
