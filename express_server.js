@@ -23,6 +23,10 @@ const urlDatabase = {
     longURL: "https://www.google.ca",
     userID: "aJ48lW",
   },
+  i34oGr: {
+    longURL: "https://www.google.ca",
+    userID: "abcdef",
+  },
 };
 
 
@@ -151,7 +155,7 @@ app.post("/register", (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
-  console.log("cookie user id",req.cookies["user_id"])
+  console.log("cookie user id", req.cookies["user_id"])
   const { user } = generateTemplateVarUser(req);
 
   //user not logged in
@@ -172,7 +176,7 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const { user } = generateTemplateVarUser(req);
-  
+
   if (!user) {
     return res.status(403).send("You need an account to access this page");
   }
@@ -208,9 +212,30 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const id = req.params.id;
   const { user } = generateTemplateVarUser(req);
-  const templateVars = { id, longURL: urlDatabase[id], user };
+
+  console.log("user", user);
+  if (!user) {
+    return res.status(403).send("You need to be logged in to access this page");
+  }
+
+  //url id
+  const id = req.params.id;
+  console.log("url id", id);
+
+  //check if url does not exist in the database
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Page not found");
+  }
+
+  //check if url id belongs to the user id that is logged in 
+  if (urlDatabase[id].userID !== user.id) {
+    return res.status(403).send("Not allowed to view this page");
+  }
+
+
+
+  const templateVars = { id, longURL: urlDatabase[id].longURL, user };
   res.render("urls_show", templateVars);
 });
 
