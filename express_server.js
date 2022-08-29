@@ -15,7 +15,7 @@ const urlDatabase = {
 };
 
 const users = {
-  w5wmb: { id: 'w5wmb', email: 'gene.tenorlas@yahoo.com', password: 'abc' }
+  w5wmb: { id: 'w5wmb', email: 'gene.t@yahoo.com', password: 'abc' }
 };
 
 
@@ -29,6 +29,15 @@ const generateRandomString = function () {
   }
 
   return string;
+}
+
+const findUser = (email) => {
+  for (const id in users) {
+    if (users[id].email === email) {
+      return users[id];
+    }
+  }
+  return null;
 }
 
 app.get("/", (req, res) => {
@@ -96,6 +105,15 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send("Invalid email or password");
+  }
+
+  if (findUser(email)) {
+    return res.status(400).send("Email already taken");
+  }
+
   const id = generateRandomString();
   const newUser = { id, email, password };
   users[id] = newUser;
