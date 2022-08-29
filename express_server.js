@@ -153,12 +153,13 @@ app.post("/register", (req, res) => {
 app.get("/urls", (req, res) => {
   console.log("cookie user id",req.cookies["user_id"])
   const { user } = generateTemplateVarUser(req);
-  console.log("user", user);
 
+  //user not logged in
   if (!user) {
     return res.status(403).send("You need an account to access this page");
   }
 
+  //retrieve all urls that pertain to the userID
   const urls = urlsForUser(user.id);
 
   const templateVars = {
@@ -171,7 +172,7 @@ app.get("/urls", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const { user } = generateTemplateVarUser(req);
-
+  
   if (!user) {
     return res.status(403).send("You need an account to access this page");
   }
