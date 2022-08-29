@@ -17,19 +17,14 @@
                   <a class="nav-item nav-link btn disabled" href="#" style="color: yellow;">
                     <%= user.email %>
                   </a>
-                  <button type="submit" class="btn btn-primary">Logout</button>
+                  <button type="submit" class="btn btn-outline-dark btn-lg">Logout</button>
                 </div>
               </form>
             </div>
             <% }else { %>
-              <div class="login-container justify-content-right">
-                <form class="form-inline" action="/login" method="POST">
-                  <div class="form-group mb-2">
-                    <input class="form-control" type="text" name="username" placeholder="Enter username"
-                      style="width: 300px; margin: 1em" />
-                    <button type="submit" class="btn btn-primary">Login</button>
-                  </div>
-                </form>
+              <div class="login-container justify-content-right navbar-right">
+                <a href="/login" class="btn btn-outline-dark btn-lg" role="button">Login</a>
+                <a href="/register" class="btn btn-outline-dark btn-lg" role="button">Register</a>
               </div>
               <% } %>
 
