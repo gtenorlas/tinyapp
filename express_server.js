@@ -233,8 +233,6 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).send("Not allowed to view this page");
   }
 
-
-
   const templateVars = { id, longURL: urlDatabase[id].longURL, user };
   res.render("urls_show", templateVars);
 });
