@@ -68,9 +68,14 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const { username } = req.body;
+  const { email, password } = req.body;
+  const user = getUserByEmail(email);
 
-  res.cookie("username", username);
+  if(!user || user.password !== password) {
+    return res.status(403).send("Invalid email or password");
+  }
+
+  res.cookie('user_id', user.id);
   res.redirect("/urls");
 });
 
@@ -82,12 +87,10 @@ app.post("/logout", (req, res) => {
 app.get("/urls", (req, res) => {
   const userID = req.cookies["user_id"];
   const user = users[userID] === undefined ? null : users[userID];
-  console.log("user", user);
   const templateVars = {
     user,
     urls: urlDatabase
   };
-  console.log("user", user);
   res.render("urls_index", templateVars);
 
 });
@@ -104,7 +107,6 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: null
   };
-  console.log("user", templateVars.user);
   res.render("register", templateVars);
 });
 
