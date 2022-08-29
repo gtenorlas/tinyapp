@@ -155,7 +155,6 @@ app.post("/register", (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
-  console.log("cookie user id", req.cookies["user_id"])
   const { user } = generateTemplateVarUser(req);
 
   //user not logged in
@@ -206,7 +205,24 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  const { user } = generateTemplateVarUser(req);
+  //url id
   const id = req.params.id;
+
+  if (!user) {
+    return res.status(403).send("You need to be logged in to access this page");
+  }
+
+  //check if url does not exist in the database
+  if (!urlDatabase[id]) {
+    return res.status(404).send("Page not found");
+  }
+
+  //check if url id belongs to the user id that is logged in 
+  if (urlDatabase[id].userID !== user.id) {
+    return res.status(403).send("Not allowed to view this page");
+  }
+
   delete urlDatabase[id];
   res.redirect("/urls");
 });
