@@ -221,7 +221,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.delete("/urls/:id", (req, res) => {
-  console.log("in the delete route")
+  console.log("in the delete route");
   const { user } = generateTemplateVarUser(req);
   //url id
   const id = req.params.id;
