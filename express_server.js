@@ -222,7 +222,13 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const userID = user.id;
 
-  urlDatabase[tinyURL] = { longURL, userID };
+  urlDatabase[tinyURL] = {
+    longURL,
+    userID,
+    visitedCount: 0,
+    uniqueVisit: 0,
+    visitLogs: []
+  };
   console.log("Url database: ", urlDatabase)
   res.redirect(`urls/${tinyURL}`);
 });
