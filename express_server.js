@@ -5,7 +5,7 @@ const methodOverride = require('method-override');
 const { getUserByEmail, urlsForUser, generateRandomString, generateTemplateVarUser, isUniqueVisitor } = require("./helpers");
 const { urlDatabase, users } = require('./db');
 
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
-// override with POST having ?_method=DELETE
+// override with POST having ?_method=DELETE or ?_method=PUT
 app.use(methodOverride('_method'));
 
 
@@ -88,7 +88,7 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const newUser = { id, email, password: hashedPassword };
   users[id] = newUser;
-  req.session.userID = id; //cookie-session
+  req.session.userID = id;
   res.redirect("/urls");
 });
 
