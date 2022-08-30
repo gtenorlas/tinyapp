@@ -4,7 +4,7 @@ const cookieSession = require('cookie-session')
 //const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const methodOverride = require('method-override');
-const { getUserByEmail } = require("./helpers");
+const { getUserByEmail, urlsForUser, generateRandomString, generateTemplateVarUser, isUniqueVisitor } = require("./helpers");
 
 const PORT = 8080; // default port 8080
 
@@ -62,49 +62,7 @@ const users = {
   aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: '$2a$10$bdYMxRHnInkT9y1TVBAneeyjM612q5uKf0DxGGKVXufjIM3eYk3Ye' }
 };
 
-const urlsForUser = (userID) => {
-  const urls = {};
-  for (const id in urlDatabase) {
-    if (urlDatabase[id].userID === userID) {
-      urls[id] = urlDatabase[id].longURL;
-    }
-  }
-  return urls;
-}
 
-const generateRandomString = function () {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let string = "";
-  let charactersLength = characters.length;
-
-  for (let i = 0; i < 6; i++) {
-    string += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return string;
-}
-
-const generateTemplateVarUser = (req) => {
-  //const userID = req.cookies["user_id"]; //cookie-parser
-  const userID = req.session.user_id; //cookie-session
-  const user = users[userID] === undefined ? null : users[userID];
-  const templateVars = {
-    user
-  };
-  return templateVars;
-}
-
-/*
-Helper function to validate if the visitor for the shortURL is unique or not
-*/
-const isUniqueVisitor = (visitorID, urlID) => {
-  for (const each of urlDatabase[urlID].visitLogs) {
-    if (each.visitorID === visitorID) {
-      return false;
-    }
-  }
-  return true;
-};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -129,7 +87,7 @@ app.get("/fetch", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
   //user already logged in -> redirect to /urls page
   if (user) {
     return res.redirect("/urls");
@@ -162,7 +120,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
   //user already logged in -> redirect to /urls page
   if (user) {
     return res.redirect("/urls");
@@ -193,7 +151,7 @@ app.post("/register", (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
 
   //user not logged in
   if (!user) {
@@ -201,7 +159,7 @@ app.get("/urls", (req, res) => {
   }
 
   //retrieve all urls that pertain to the userID
-  const urls = urlsForUser(user.id);
+  const urls = urlsForUser(user.id, urlDatabase);
 
   const templateVars = {
     user,
@@ -212,7 +170,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
 
   if (!user) {
     return res.status(403).send("You need an account to access this page");
@@ -241,7 +199,7 @@ app.post("/urls", (req, res) => {
   from most specific to least specific.
 */
 app.get("/urls/new", (req, res) => {
-  const templateObj = generateTemplateVarUser(req);
+  const templateObj = generateTemplateVarUser(req, users);
   const { user } = templateObj;
   //user not logged in
   if (!user) {
@@ -252,7 +210,7 @@ app.get("/urls/new", (req, res) => {
 
 app.delete("/urls/:id", (req, res) => {
   console.log("in the delete route");
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
   //url id
   const id = req.params.id;
 
@@ -275,7 +233,7 @@ app.delete("/urls/:id", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
   //url id
   const id = req.params.id;
 
@@ -300,7 +258,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.put("/urls/:id", (req, res) => {
   console.log("in put id");
-  const { user } = generateTemplateVarUser(req);
+  const { user } = generateTemplateVarUser(req, users);
   //url id
   const id = req.params.id;
 
@@ -336,7 +294,7 @@ app.get("/u/:id", (req, res) => {
   urlDatabase[id].visitedCount++;
 
   //unique visitor --never visited the site before or visited the site but different shortURL--
-  if (!req.session.visitor_id || isUniqueVisitor(visitorID, id)) {
+  if (!req.session.visitor_id || isUniqueVisitor(visitorID, id, urlDatabase)) {
     visitorID = generateRandomString();
     req.session.visitor_id = visitorID;
     urlDatabase[id].uniqueVisit++;
