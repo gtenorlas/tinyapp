@@ -135,7 +135,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  //res.clearCookie("user_id"); //cookie-parser
+  req.session.user_id = null;
   res.redirect("/urls");
 });
 
