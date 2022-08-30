@@ -76,7 +76,8 @@ const getUserByEmail = (email) => {
 }
 
 const generateTemplateVarUser = (req) => {
-  const userID = req.cookies["user_id"];
+  //const userID = req.cookies["user_id"]; //cookie-parser
+  const userID = req.session.user_id; //cookie-session
   const user = users[userID] === undefined ? null : users[userID];
   const templateVars = {
     user
