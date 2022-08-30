@@ -293,7 +293,8 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).send("Not allowed to view this page");
   }
 
-  const templateVars = { id, user, longURL: urlDatabase[id].longURL, urlObj : urlDatabase[id] };
+  const templateVars = { id, user, longURL: urlDatabase[id].longURL, urlObj: urlDatabase[id] };
+  console.log("templateVars: ", templateVars);
   res.render("urls_show", templateVars);
 });
 
