@@ -115,7 +115,8 @@ app.post("/login", (req, res) => {
     return res.status(400).send("Email or password cannot be empty");
   }
 
-  if (!user || user.password !== password) {
+  //bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword);
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Invalid email or password");
   }
 
@@ -153,6 +154,7 @@ app.post("/register", (req, res) => {
   const newUser = { id, email, password: hashedPassword };
   console.log("New registered user: ", newUser);
   users[id] = newUser;
+  console.log("all users", users);
   res.cookie('user_id', id);
   res.redirect("/urls");
 })
