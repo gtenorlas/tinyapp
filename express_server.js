@@ -335,6 +335,10 @@ app.get("/u/:id", (req, res) => {
     urlDatabase[id].uniqueVisit++;
   }
 
+  //timestamp
+  const timeStamp = new Date().toUTCString();
+  urlDatabase[id].visitLogs.push({ timeStamp, visitorID });
+
   res.redirect(longURL);
 });
 
