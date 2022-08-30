@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const methodOverride = require('method-override');
 const { getUserByEmail, urlsForUser, generateRandomString, generateTemplateVarUser, isUniqueVisitor } = require("./helpers");
+const { urlDatabase, users } = require('./db');
 
 const PORT = 8080; // default port 8080
 
@@ -23,36 +24,6 @@ app.use(cookieSession({
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'));
 
-
-
-////-----DATABASES -----
-const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
-    visitedCount: 0,
-    uniqueVisit: 0,
-    visitLogs: []
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW",
-    visitedCount: 3,
-    uniqueVisit: 2,
-    visitLogs: []
-  },
-  i34oGr: {
-    longURL: "https://www.google.ca",
-    userID: "abcdef",
-    visitedCount: 0,
-    uniqueVisit: 0,
-    visitLogs: []
-  },
-};
-
-const users = {
-  aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: '$2a$10$bdYMxRHnInkT9y1TVBAneeyjM612q5uKf0DxGGKVXufjIM3eYk3Ye' }
-};
 
 
 ////-----END POINTS -----
@@ -262,7 +233,7 @@ app.get("/u/:id", (req, res) => {
 
   const longURL = urlDatabase[id].longURL;
   let visitorID = req.session.visitorID;
- 
+
 
   //add to visitedCount
   urlDatabase[id].visitedCount++;
