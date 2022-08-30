@@ -293,7 +293,7 @@ app.get("/urls/:id", (req, res) => {
     return res.status(403).send("Not allowed to view this page");
   }
 
-  const templateVars = { id, user, longURL: urlDatabase[id].longURL };
+  const templateVars = { id, user, longURL: urlDatabase[id].longURL, urlObj : urlDatabase[id] };
   res.render("urls_show", templateVars);
 });
 
@@ -334,7 +334,7 @@ app.get("/u/:id", (req, res) => {
   //add to visitedCount
   urlDatabase[id].visitedCount++;
 
-  //unique visitor
+  //unique visitor --never visited the site before or visited the site but different shortURL--
   if (!req.session.visitor_id || isUniqueVisitor(visitorID, id)) {
     visitorID = generateRandomString();
     req.session.visitor_id = visitorID;
