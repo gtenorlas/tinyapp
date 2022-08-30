@@ -3,6 +3,7 @@ const express = require("express");
 const cookieSession = require('cookie-session')
 //const { response } = require("express");
 const bcrypt = require("bcryptjs");
+const { getUserByEmail } = require("./helpers");
 
 const PORT = 8080; // default port 8080
 
@@ -66,15 +67,6 @@ const generateRandomString = function () {
   return string;
 }
 
-const getUserByEmail = (email) => {
-  for (const id in users) {
-    if (users[id].email === email) {
-      return users[id];
-    }
-  }
-  return null;
-}
-
 const generateTemplateVarUser = (req) => {
   //const userID = req.cookies["user_id"]; //cookie-parser
   const userID = req.session.user_id; //cookie-session
@@ -118,7 +110,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
 
   if (!email || !password) {
     return res.status(400).send("Email or password cannot be empty");
@@ -156,7 +148,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Invalid email or password");
   }
 
-  if (getUserByEmail(email)) {
+  if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already taken");
   }
 
