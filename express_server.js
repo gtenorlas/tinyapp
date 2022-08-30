@@ -1,7 +1,5 @@
 const express = require("express");
-//const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
-//const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const methodOverride = require('method-override');
 const { getUserByEmail, urlsForUser, generateRandomString, generateTemplateVarUser, isUniqueVisitor } = require("./helpers");
