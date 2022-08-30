@@ -267,8 +267,8 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls/:id", (req, res) => {
-  console.log("in post id");
+app.put("/urls/:id", (req, res) => {
+  console.log("in put id");
   const { user } = generateTemplateVarUser(req);
   //url id
   const id = req.params.id;
