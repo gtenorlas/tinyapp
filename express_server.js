@@ -3,11 +3,14 @@ const express = require("express");
 const cookieSession = require('cookie-session')
 //const { response } = require("express");
 const bcrypt = require("bcryptjs");
+const methodOverride = require('method-override');
 const { getUserByEmail } = require("./helpers");
 
 const PORT = 8080; // default port 8080
 
 const app = express();
+
+//middlewares
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
 //app.use(cookieParser());
@@ -18,6 +21,8 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'))
 
 /* const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -215,7 +220,8 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateObj);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
+  console.log("in the delete route")
   const { user } = generateTemplateVarUser(req);
   //url id
   const id = req.params.id;
@@ -262,6 +268,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
+  console.log("in post id");
   const { user } = generateTemplateVarUser(req);
   //url id
   const id = req.params.id;
