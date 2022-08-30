@@ -10,7 +10,7 @@ const PORT = 8080; // default port 8080
 
 const app = express();
 
-//middlewares
+////-----MIDDLEWARES -----
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
 //app.use(cookieParser());
@@ -23,6 +23,10 @@ app.use(cookieSession({
 }))
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
+
+
+
+////-----DATABASES -----
 
 /* const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -68,7 +72,6 @@ const urlsForUser = (userID) => {
   return urls;
 }
 
-
 const generateRandomString = function () {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let string = "";
@@ -90,6 +93,18 @@ const generateTemplateVarUser = (req) => {
   };
   return templateVars;
 }
+
+/*
+Helper function to validate if the visitor for the shortURL is unique or not
+*/
+const isUniqueVisitor = (visitorID, urlID) => {
+  for (const each of urlDatabase[urlID].visitLogs) {
+    if (each.visitorID === visitorID) {
+      return false;
+    }
+  }
+  return true;
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -305,12 +320,20 @@ app.put("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id].longURL;
+  let visitorID = req.session.visitor_id;
   if (!longURL) {
     return res.status(404).send(`404. ${id} Not Found`);;
   }
 
   //add to visitedCount
   urlDatabase[id].visitedCount++;
+
+  //unique visitor
+  if (!req.session.visitor_id || isUniqueVisitor(visitorID, id)) {
+    visitorID = generateRandomString();
+    req.session.visitor_id = visitorID;
+    urlDatabase[id].uniqueVisit++;
+  }
 
   res.redirect(longURL);
 });
