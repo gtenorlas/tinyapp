@@ -187,8 +187,10 @@ app.post("/urls", (req, res) => {
 
   const tinyURL = generateRandomString();
   const longURL = req.body.longURL;
+  const userID = user.id;
 
-  urlDatabase[tinyURL] = longURL;
+  urlDatabase[tinyURL] = { longURL, userID };
+  console.log("Url database: ", urlDatabase)
   res.redirect(`urls/${tinyURL}`);
 });
 
