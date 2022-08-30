@@ -308,6 +308,10 @@ app.get("/u/:id", (req, res) => {
   if (!longURL) {
     return res.status(404).send(`404. ${id} Not Found`);;
   }
+
+  //add to visitedCount
+  urlDatabase[id].visitedCount++;
+
   res.redirect(longURL);
 });
 
