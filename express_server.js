@@ -1,6 +1,7 @@
 const express = require("express");
-const cookieParser = require('cookie-parser');
-const { response } = require("express");
+//const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session')
+//const { response } = require("express");
 const bcrypt = require("bcryptjs");
 
 const PORT = 8080; // default port 8080
@@ -8,7 +9,14 @@ const PORT = 8080; // default port 8080
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
-app.use(cookieParser());
+//app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['abc12345key'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 /* const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
