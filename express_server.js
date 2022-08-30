@@ -13,7 +13,6 @@ const app = express();
 ////-----MIDDLEWARES -----
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); //to make the body in the POST request readable
-//app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys: ['abc12345key'],
@@ -27,12 +26,6 @@ app.use(methodOverride('_method'))
 
 
 ////-----DATABASES -----
-
-/* const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-}; */
-
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -57,13 +50,12 @@ const urlDatabase = {
   },
 };
 
-
 const users = {
   aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: '$2a$10$bdYMxRHnInkT9y1TVBAneeyjM612q5uKf0DxGGKVXufjIM3eYk3Ye' }
 };
 
 
-
+////-----END POINTS -----
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -103,7 +95,6 @@ app.post("/login", (req, res) => {
     return res.status(400).send("Email or password cannot be empty");
   }
 
-  //bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword);
   if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Invalid email or password");
   }
@@ -142,10 +133,7 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
   const newUser = { id, email, password: hashedPassword };
-  console.log("New registered user: ", newUser);
   users[id] = newUser;
-  console.log("all users", users);
-  //res.cookie('user_id', id);
   req.session.user_id = id; //cookie-session
   res.redirect("/urls");
 })
@@ -187,7 +175,7 @@ app.post("/urls", (req, res) => {
     uniqueVisit: 0,
     visitLogs: []
   };
-  console.log("Url database: ", urlDatabase)
+
   res.redirect(`urls/${tinyURL}`);
 });
 
@@ -209,7 +197,6 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.delete("/urls/:id", (req, res) => {
-  console.log("in the delete route");
   const { user } = generateTemplateVarUser(req, users);
   //url id
   const id = req.params.id;
@@ -252,12 +239,10 @@ app.get("/urls/:id", (req, res) => {
   }
 
   const templateVars = { id, user, longURL: urlDatabase[id].longURL, urlObj: urlDatabase[id] };
-  console.log("templateVars: ", templateVars);
   res.render("urls_show", templateVars);
 });
 
 app.put("/urls/:id", (req, res) => {
-  console.log("in put id");
   const { user } = generateTemplateVarUser(req, users);
   //url id
   const id = req.params.id;
