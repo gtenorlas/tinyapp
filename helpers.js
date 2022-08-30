@@ -37,7 +37,7 @@ const generateRandomString = function() {
 };
 
 const generateTemplateVarUser = (req, users) => {
-  const userID = req.session.user_id; //cookie-session
+  const userID = req.session.userID; //cookie-session
   const user = users[userID] === undefined ? null : users[userID];
   const templateVars = {
     user

@@ -86,14 +86,12 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Invalid email or password");
   }
 
-  //res.cookie('user_id', user.id); //cookie-parser
-  req.session.user_id = user.id;
+  req.session.userID = user.id;
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  //res.clearCookie("user_id"); //cookie-parser
-  req.session.user_id = null;
+  req.session.userID = null;
   res.redirect("/urls");
 });
 
@@ -121,7 +119,7 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const newUser = { id, email, password: hashedPassword };
   users[id] = newUser;
-  req.session.user_id = id; //cookie-session
+  req.session.userID = id; //cookie-session
   res.redirect("/urls");
 });
 
@@ -130,7 +128,7 @@ app.get("/urls", (req, res) => {
 
   //user not logged in
   if (!user) {
-    return res.status(403).send("You need an account to access this page");
+    return res.status(403).send("You need an account to access this page. <br/><a href='/login'>Login</a><br/><a href='/register'>Register</a>");
   }
 
   //retrieve all urls that pertain to the userID
@@ -256,19 +254,23 @@ app.put("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
-  const longURL = urlDatabase[id].longURL;
-  let visitorID = req.session.visitor_id;
-  if (!longURL) {
+
+  //id does not exists in db
+  if (!urlDatabase[id]) {
     return res.status(404).send(`404. ${id} Not Found`);
   }
+
+  const longURL = urlDatabase[id].longURL;
+  let visitorID = req.session.visitorID;
+ 
 
   //add to visitedCount
   urlDatabase[id].visitedCount++;
 
   //unique visitor --never visited the site before or visited the site but different shortURL--
-  if (!req.session.visitor_id || isUniqueVisitor(visitorID, id, urlDatabase)) {
+  if (!req.session.visitorID || isUniqueVisitor(visitorID, id, urlDatabase)) {
     visitorID = generateRandomString();
-    req.session.visitor_id = visitorID;
+    req.session.visitorID = visitorID;
     urlDatabase[id].uniqueVisit++;
   }
 
