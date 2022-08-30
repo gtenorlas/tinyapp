@@ -128,7 +128,8 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Invalid email or password");
   }
 
-  res.cookie('user_id', user.id);
+  //res.cookie('user_id', user.id); //cookie-parser
+  req.session.user_id = user.id;
   res.redirect("/urls");
 });
 
@@ -163,7 +164,8 @@ app.post("/register", (req, res) => {
   console.log("New registered user: ", newUser);
   users[id] = newUser;
   console.log("all users", users);
-  res.cookie('user_id', id);
+  //res.cookie('user_id', id);
+  req.session.user_id = id; //cookie-session
   res.redirect("/urls");
 })
 
