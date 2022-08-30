@@ -32,7 +32,7 @@ const urlDatabase = {
 
 
 const users = {
-  aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: 'abc' }
+  aJ48lW: { id: 'aJ48lW', email: 'gene.t@yahoo.com', password: '$2a$10$bdYMxRHnInkT9y1TVBAneeyjM612q5uKf0DxGGKVXufjIM3eYk3Ye' }
 };
 
 const urlsForUser = (userID) => {
@@ -51,7 +51,7 @@ const generateRandomString = function () {
   let string = "";
   let charactersLength = characters.length;
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     string += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
 
@@ -148,8 +148,10 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Email already taken");
   }
 
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
-  const newUser = { id, email, password };
+  const newUser = { id, email, password: hashedPassword };
+  console.log("New registered user: ", newUser);
   users[id] = newUser;
   res.cookie('user_id', id);
   res.redirect("/urls");
