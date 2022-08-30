@@ -2,7 +2,7 @@
 Get the user object from the database that matches the user's email
 return user object or null
 */
-const getUserByEmail = function (email, database) {
+const getUserByEmail = function(email, database) {
   for (const id in database) {
     if (database[id].email === email) {
       return database[id];
@@ -11,6 +11,9 @@ const getUserByEmail = function (email, database) {
   return undefined;
 };
 
+/*
+Retrieve all urls that belongs to the user that is logged in
+*/
 const urlsForUser = (userID, urlDatabase) => {
   const urls = {};
   for (const id in urlDatabase) {
@@ -19,9 +22,9 @@ const urlsForUser = (userID, urlDatabase) => {
     }
   }
   return urls;
-}
+};
 
-const generateRandomString = function () {
+const generateRandomString = function() {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let string = "";
   let charactersLength = characters.length;
@@ -31,17 +34,16 @@ const generateRandomString = function () {
   }
 
   return string;
-}
+};
 
 const generateTemplateVarUser = (req, users) => {
-  //const userID = req.cookies["user_id"]; //cookie-parser
   const userID = req.session.user_id; //cookie-session
   const user = users[userID] === undefined ? null : users[userID];
   const templateVars = {
     user
   };
   return templateVars;
-}
+};
 
 /*
 Helper function to validate if the visitor for the shortURL is unique or not

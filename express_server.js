@@ -1,6 +1,6 @@
 const express = require("express");
 //const cookieParser = require('cookie-parser');
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 //const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const methodOverride = require('method-override');
@@ -19,9 +19,9 @@ app.use(cookieSession({
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
+}));
 // override with POST having ?_method=DELETE
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 
 
@@ -64,19 +64,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  const templateVars = { greeting: "Hello World!" };
-  res.render("hello_world", templateVars);
-});
-
-app.get("/set", (req, res) => {
-  const a = 1;
-  res.send(`a = ${a}`);
-});
-
-app.get("/fetch", (req, res) => {
-  res.send(`a = ${a}`);
-});
 
 app.get("/login", (req, res) => {
   const { user } = generateTemplateVarUser(req, users);
@@ -136,7 +123,7 @@ app.post("/register", (req, res) => {
   users[id] = newUser;
   req.session.user_id = id; //cookie-session
   res.redirect("/urls");
-})
+});
 
 app.get("/urls", (req, res) => {
   const { user } = generateTemplateVarUser(req, users);
@@ -180,9 +167,9 @@ app.post("/urls", (req, res) => {
 });
 
 /*
-  NOTE: 
+  NOTE:
   ! The GET /urls/new route needs to be defined before the GET /urls/:id route. Routes defined earlier will take precedence,
-  so if we place this route after the /urls/:id definition, any calls to /urls/new will be handled by app.get("/urls/:id", ...) 
+  so if we place this route after the /urls/:id definition, any calls to /urls/new will be handled by app.get("/urls/:id", ...)
   because Express will think that new is a route parameter. A good rule of thumb to follow is that routes should be ordered
   from most specific to least specific.
 */
@@ -210,7 +197,7 @@ app.delete("/urls/:id", (req, res) => {
     return res.status(404).send("Page not found");
   }
 
-  //check if url id belongs to the user id that is logged in 
+  //check if url id belongs to the user id that is logged in
   if (urlDatabase[id].userID !== user.id) {
     return res.status(403).send("Not allowed to view this page");
   }
@@ -233,7 +220,7 @@ app.get("/urls/:id", (req, res) => {
     return res.status(404).send("Page not found");
   }
 
-  //check if url id belongs to the user id that is logged in 
+  //check if url id belongs to the user id that is logged in
   if (urlDatabase[id].userID !== user.id) {
     return res.status(403).send("Not allowed to view this page");
   }
@@ -256,7 +243,7 @@ app.put("/urls/:id", (req, res) => {
     return res.status(404).send("Page not found");
   }
 
-  //check if url id belongs to the user id that is logged in 
+  //check if url id belongs to the user id that is logged in
   if (urlDatabase[id].userID !== user.id) {
     return res.status(403).send("Not allowed to view this page");
   }
@@ -272,7 +259,7 @@ app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[id].longURL;
   let visitorID = req.session.visitor_id;
   if (!longURL) {
-    return res.status(404).send(`404. ${id} Not Found`);;
+    return res.status(404).send(`404. ${id} Not Found`);
   }
 
   //add to visitedCount
